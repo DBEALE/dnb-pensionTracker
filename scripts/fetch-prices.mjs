@@ -29,12 +29,17 @@ const ONLY = (() => {
 
 const today = () => new Date().toISOString().slice(0, 10);
 
+/** FX pairs always fetched, so non-GBP proxies can be converted to sterling.
+ *  Without this a USD-quoted ETF silently drops the currency leg of the return. */
+const FX_SYMBOLS = ["GBPUSD=X", "GBPEUR=X"];
+
 function collectSymbols(config) {
   const out = new Map();
   for (const pot of config.pots)
     for (const fund of pot.funds ?? [])
       for (const c of fund.proxy?.components ?? [])
         if (c.symbol) out.set(c.symbol, fund.proxy?.type ?? "market");
+  for (const fx of FX_SYMBOLS) out.set(fx, "market");
   return out;
 }
 
@@ -100,11 +105,39 @@ async function fetchStooq(symbol) {
 }
 
 /**
- * Aviva / Phoenix insured funds by ISIN. Not implemented - the Aviva Fund
- * Centre sits behind an undocumented API. See README "Wiring up Aviva prices".
+ * Aviva / Phoenix insured funds by ISIN, via EODHD's European fund feed.
+ * Needs EODHD_API_KEY in the environment (a GitHub Actions repo secret).
+ * Returns sterling, so no FX conversion is applied downstream.
  */
 async function fetchIsin(isin) {
-  throw new Error("isin provider not implemented");
+  const key = process.env.EODHD_API_KEY;
+  if (!key) throw new Error("EODHD_API_KEY not set");
+
+  // Ask for a short window - enough to survive a long weekend or a bank
+  // holiday, small enough to keep the response tiny.
+  const from = new Date(Date.now() - 14 * 86400_000).toISOString().slice(0, 10);
+  const url =
+    `https://eodhd.com/api/eod/${encodeURIComponent(isin)}.EUFUND` +
+    `?api_token=${encodeURIComponent(key)}&fmt=json&period=d&from=${from}`;
+
+  const res = await fetch(url);
+  if (res.status === 401 || res.status === 403)
+    throw new Error(`HTTP ${res.status} (bad or unauthorised API key)`);
+  if (res.status === 429) throw new Error("HTTP 429 (daily call limit reached)");
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+  const rows = await res.json();
+  if (!Array.isArray(rows) || !rows.length)
+    throw new Error("no rows (ISIN not covered?)");
+
+  for (let i = rows.length - 1; i >= 0; i--) {
+    // adjusted_close carries distributions, which matters for the accumulation
+    // series we're tracking; fall back to close where it's absent.
+    const px = rows[i].adjusted_close ?? rows[i].close;
+    if (Number.isFinite(px))
+      return { price: px, currency: "GBP", asOf: rows[i].date, via: "eodhd" };
+  }
+  throw new Error("no usable close in window");
 }
 
 async function fetchWithFallback(symbol, type) {

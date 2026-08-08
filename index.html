@@ -141,15 +141,37 @@ const save = () => localStorage.setItem(KEY, JSON.stringify(HOLD));
 /* Composite proxy level on a given date, rebased so it equals 1 at baseDate.
    Returns null when any component lacks data — better to show a fund as stale
    than to quietly value it on partial information. */
+const seriesAt = (symbol, d) => {
+  const s = PRICES.series?.[symbol];
+  if (!s || !s.length) return null;
+  let v = null;
+  for (const [dt,p] of s){ if (dt <= d) v = p; else break; }
+  return v;
+};
+
+/* Your funds are priced in sterling. A proxy quoted in another currency carries
+   an FX leg that must be divided out, or a move in sterling shows up as fund
+   performance that never happened. GBP vs GBp needs no handling - the ratio
+   cancels any constant scale factor. */
+const FX_FOR = { USD: "GBPUSD=X", EUR: "GBPEUR=X" };
+
+function priceInGbp(symbol, date){
+  const raw = seriesAt(symbol, date);
+  if (raw == null) return null;
+  const ccy = PRICES.meta?.[symbol]?.currency;
+  const fxSym = ccy && FX_FOR[ccy.toUpperCase()];
+  if (!fxSym) return raw;                       // GBP or GBp - use as-is
+  const fx = seriesAt(fxSym, date);             // units of ccy per GBP
+  if (fx == null || !fx) return null;
+  return raw / fx;
+}
+
 function proxyRatio(fund, date, baseDate){
   const comps = fund.proxy?.components || [];
   if (!comps.length) return null;
   let acc = 0;
   for (const c of comps){
-    const s = PRICES.series?.[c.symbol];
-    if (!s || !s.length) return null;
-    const at = d => { let v = null; for (const [dt,p] of s){ if (dt <= d) v = p; else break; } return v; };
-    const now = at(date), base = at(baseDate);
+    const now = priceInGbp(c.symbol, date), base = priceInGbp(c.symbol, baseDate);
     if (now == null || base == null || !base) return null;
     acc += c.weight * (now / base);
   }

@@ -27,6 +27,8 @@ jobs:
           node-version: "20"
 
       - name: Fetch prices
+        env:
+          EODHD_API_KEY: ${{ secrets.EODHD_API_KEY }}
         run: node scripts/fetch-prices.mjs
 
       - name: Keepalive (first weekday of the month)
