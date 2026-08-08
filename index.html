@@ -162,6 +162,40 @@ function priceDates(){
   return [...set].sort();
 }
 
+/* Manually recorded pot totals, imported under the "_history" key.
+   Shape: { "_history": { "hsbc": [["2026-01-05", 340123.45], ...], "total": [...] } }
+   These are real observations, so they take precedence over derived values on
+   any date they cover. Everything after your last manual entry is derived. */
+const history = () => HOLD._history || {};
+
+function historyDates(){
+  const set = new Set();
+  for (const s of Object.values(history())) for (const [d] of s) set.add(d);
+  return [...set];
+}
+
+/** Recorded total on a date, or null if that date isn't covered.
+    A "total" series wins outright; otherwise per-pot entries are summed, but
+    only when every pot with history has a value on that exact date - a partial
+    sum would silently understate the pot and look like a crash on the chart. */
+function historyTotal(date){
+  const h = history();
+  if (h.total){
+    const hit = h.total.find(r => r[0] === date);
+    if (hit) return hit[1];
+    if (!Object.keys(h).some(k => k !== "total")) return null;
+  }
+  const keys = Object.keys(h).filter(k => k !== "total");
+  if (!keys.length) return null;
+  let sum = 0;
+  for (const k of keys){
+    const hit = (h[k] || []).find(r => r[0] === date);
+    if (!hit) return null;
+    sum += hit[1];
+  }
+  return sum;
+}
+
 function valueFund(fund, h, date){
   if (!h || !h.units) return null;
   const r = proxyRatio(fund, date, h.priceDate);
@@ -176,8 +210,9 @@ function render(){
   document.getElementById("app").classList.toggle("hide", held.length === 0);
   if (!held.length) return;
 
-  const dates = priceDates();
-  const today = dates.at(-1) || new Date().toISOString().slice(0,10);
+  const pDates = priceDates();
+  const dates = [...new Set([...pDates, ...historyDates()])].sort();
+  const today = pDates.at(-1) || dates.at(-1) || new Date().toISOString().slice(0,10);
 
   // Totals
   let total = 0, mix = {equity:0, fixedIncome:0, alternatives:0, cash:0}, stale = 0;
@@ -192,17 +227,26 @@ function render(){
   document.getElementById("total").textContent = fmt(total);
 
   // Series
+  // Recorded totals beat derived ones. Before any price history exists there is
+  // nothing to derive from, so those dates are recorded-only.
+  const sources = [];
   const series = dates.map(d => {
+    const recorded = historyTotal(d);
+    if (recorded != null){ sources.push("recorded"); return recorded; }
+    if (d < (pDates[0] ?? "")){ sources.push("none"); return null; }
     let t = 0;
     for (const f of held) t += valueFund(f, HOLD[f.id], d) ?? 0;
+    sources.push("derived");
     return t;
   });
-  const first = series.find(v => v > 0);
-  if (first){
-    const chg = total - series.at(-1 - Math.min(20, series.length-1));
+  const nRecorded = sources.filter(s => s === "recorded").length;
+  const pts = series.map((v,i) => v == null ? null : [dates[i], v]).filter(Boolean);
+  if (pts.length > 1){
+    const back = Math.min(20, pts.length - 1);
+    const chg = total - pts[pts.length - 1 - back][1];
     const el = document.getElementById("delta");
-    el.textContent = (chg >= 0 ? "▲ " : "▼ ") + fmt(Math.abs(chg)) + " over last " +
-                     Math.min(20, series.length) + " sessions";
+    el.textContent = (chg >= 0 ? "▲ " : "▼ ") + fmt(Math.abs(chg)) +
+                     ` over last ${back} sessions`;
     el.className = "delta " + (chg >= 0 ? "up" : "down");
   }
 
@@ -250,6 +294,7 @@ function render(){
     `<tr><th>Fund</th><th>Units</th><th>Value</th><th>%</th></tr>` + rows.join("");
 
   document.getElementById("caveats").textContent =
+    (nRecorded ? `${nRecorded} dates come from your own records (solid line); dashed is estimated. ` : "") +
     (stale ? `${stale} holding(s) have no proxy price and are shown at their last entered price. ` : "") +
     `Funds marked "approx" use a synthetic proxy; re-anchor them to the published unit price each quarter.`;
 
@@ -264,9 +309,15 @@ function render(){
     type:"line",
     data:{ labels:dates, datasets:[{ data:series, borderColor:css.getPropertyValue("--eq"),
       backgroundColor:css.getPropertyValue("--eq")+"22", borderWidth:2, fill:true,
-      pointRadius:0, tension:.25 }]},
+      pointRadius:0, tension:.25, spanGaps:true,
+      // Derived stretches are dashed so you can see at a glance where your own
+      // records stop and the proxy estimate takes over.
+      segment:{ borderDash: c => sources[c.p1DataIndex] === "derived" ? [4,3] : undefined }
+    }]},
     options:{ responsive:true, maintainAspectRatio:false,
-      plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label: c => fmt(c.parsed.y) }}},
+      plugins:{ legend:{display:false}, tooltip:{ callbacks:{
+        label: c => fmt(c.parsed.y),
+        afterLabel: c => sources[c.dataIndex] === "recorded" ? "recorded" : "estimated" }}},
       scales:{ x:{ grid:{display:false}, ticks:{maxTicksLimit:6, color:css.getPropertyValue("--muted")}},
                y:{ grid:{color:css.getPropertyValue("--line")},
                    ticks:{ color:css.getPropertyValue("--muted"), callback:v => fmt(v) }}},
