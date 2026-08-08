@@ -1,0 +1,316 @@
+{
+  "_comment": "PUBLIC config. Contains no personal data - no unit counts, no values. Proxy tickers are Yahoo Finance symbols. VERIFY each ticker before trusting the numbers; see README section 'Verifying proxies'.",
+  "schemaVersion": 1,
+  "baseCurrency": "GBP",
+  "pots": [
+    {
+      "id": "hsbc",
+      "name": "HSBC Future Focus (DC)",
+      "provider": "FIL Life Insurance Ltd",
+      "notes": "White-labelled trustee funds. No ISINs. Valued 17:00 UK business days; switch cut-off 14:00 UK.",
+      "anchorDate": "2026-03-31",
+      "factsheetUrlPattern": "https://futurefocus.staff.hsbc.co.uk/-/media/project/futurefocus/information-centre/fund-factsheets/dc-fund-factsheets-as-at-{quarterEndSlug}/hsbc-{slug}-q{q}-{yyyy}.pdf",
+      "funds": [
+        {
+          "id": "hsbc-asiapac",
+          "name": "Asia Pacific (ex Japan) Equities - passive",
+          "slug": "asia-pac-equities---passive",
+          "benchmark": "FTSE Developed Asia Pacific ex Japan Index",
+          "underlying": "100% L&G Asia Pacific (Ex Japan) Developed Equity Index Fund",
+          "anchorPricePence": 360.4,
+          "contributionPct": 10,
+          "assetMix": { "equity": 1.0, "fixedIncome": 0, "alternatives": 0, "cash": 0 },
+          "proxy": { "confidence": "high", "components": [{ "symbol": "VAPX.L", "weight": 1.0 }] }
+        },
+        {
+          "id": "hsbc-diversified",
+          "name": "Diversified Assets - active",
+          "slug": "diversified-assets---active",
+          "benchmark": "SONIA + 3% pa (cash target - NOT replicable)",
+          "underlying": "100% Schroder Life HSBC Sustainable Diversified Growth Fund",
+          "anchorPricePence": 186.5,
+          "contributionPct": 0,
+          "assetMix": { "equity": 0.4133, "fixedIncome": 0.357, "alternatives": 0.1765, "cash": 0.0532 },
+          "proxy": {
+            "confidence": "low",
+            "note": "Bespoke Schroder life fund, no public price. Synthetic blend matching the published asset breakdown.",
+            "components": [
+              { "symbol": "VEVE.L", "weight": 0.41 },
+              { "symbol": "AGBP.L", "weight": 0.36 },
+              { "symbol": "SGLN.L", "weight": 0.18 },
+              { "symbol": "CSH2.L", "weight": 0.05 }
+            ]
+          }
+        },
+        {
+          "id": "hsbc-europe",
+          "name": "European (ex UK) Equities - passive",
+          "slug": "european-ex-uk-equities--passive",
+          "benchmark": "FTSE Developed Europe ex-UK Index",
+          "underlying": "100% L&G European (Ex UK) Equity Index Fund",
+          "anchorPricePence": 376.0,
+          "contributionPct": 10,
+          "assetMix": { "equity": 1.0, "fixedIncome": 0, "alternatives": 0, "cash": 0 },
+          "proxy": { "confidence": "high", "components": [{ "symbol": "VERX.L", "weight": 1.0 }] }
+        },
+        {
+          "id": "hsbc-em",
+          "name": "Emerging Markets Equities - active",
+          "slug": "emerging-markets-equities---active",
+          "benchmark": "MSCI Emerging Markets Index",
+          "underlying": "50% Robeco Emerging Stars Equities / 50% JPM Emerging Markets ESG Equity",
+          "anchorPricePence": 272.4,
+          "contributionPct": 10,
+          "assetMix": { "equity": 1.0, "fixedIncome": 0, "alternatives": 0, "cash": 0 },
+          "proxy": {
+            "confidence": "medium",
+            "note": "Actively managed - beat benchmark by 6.3% in yr to Mar 2026. Index proxy tracks beta only.",
+            "components": [{ "symbol": "EMIM.L", "weight": 1.0 }]
+          }
+        },
+        {
+          "id": "hsbc-globalbond",
+          "name": "Global Bonds - active",
+          "slug": "global-bonds---active",
+          "benchmark": "SONIA + 2% pa (cash target - NOT replicable)",
+          "underlying": "50% M&G Total Return Credit / 50% BNY Mellon Global Dynamic Bond",
+          "anchorPricePence": 321.1,
+          "contributionPct": 10,
+          "assetMix": { "equity": 0, "fixedIncome": 1.0, "alternatives": 0, "cash": 0 },
+          "proxy": {
+            "confidence": "low",
+            "note": "LARGEST HOLDING. Underlying retail funds have no free price feed. Synthetic blend approximating published credit-rating breakdown (20% HY, 20% cash/derivatives). Fund volatility is only 1.6-2.8%/yr so absolute error stays small, but re-anchor quarterly.",
+            "components": [
+              { "symbol": "AGBP.L", "weight": 0.6 },
+              { "symbol": "GHYS.L", "weight": 0.2 },
+              { "symbol": "CSH2.L", "weight": 0.2 }
+            ]
+          }
+        },
+        {
+          "id": "hsbc-globaleq",
+          "name": "Global Equities Bespoke - passive",
+          "slug": "global-equities-bespoke---passive",
+          "benchmark": "50/50 Robeco Custom Global Multi-Factor Equity Index (GBP unhedged / GBP hedged)",
+          "underlying": "100% L&G Global Equity Blended Fund",
+          "anchorPricePence": 412.0,
+          "contributionPct": 10,
+          "assetMix": { "equity": 1.0, "fixedIncome": 0, "alternatives": 0, "cash": 0 },
+          "proxy": {
+            "confidence": "medium",
+            "note": "Custom Robeco multi-factor index, not public. Half the sleeve is GBP-hedged, so GBP/USD moves only half hit this fund.",
+            "components": [
+              { "symbol": "VEVE.L", "weight": 0.5 },
+              { "symbol": "IWDG.L", "weight": 0.5 }
+            ]
+          }
+        },
+        {
+          "id": "hsbc-japan",
+          "name": "Japanese Equities - passive",
+          "slug": "japanese-equities---passive",
+          "benchmark": "FTSE Japan Index",
+          "underlying": "100% L&G Japan Equity Index Fund",
+          "anchorPricePence": 351.1,
+          "contributionPct": 10,
+          "assetMix": { "equity": 1.0, "fixedIncome": 0, "alternatives": 0, "cash": 0 },
+          "proxy": { "confidence": "high", "components": [{ "symbol": "VJPN.L", "weight": 1.0 }] }
+        },
+        {
+          "id": "hsbc-northam",
+          "name": "North American Equities - passive",
+          "slug": "north-american-equities---passive",
+          "benchmark": "FTSE North America Index",
+          "underlying": "100% L&G North American Equity Index Fund",
+          "anchorPricePence": 562.1,
+          "contributionPct": 10,
+          "assetMix": { "equity": 1.0, "fixedIncome": 0, "alternatives": 0, "cash": 0 },
+          "proxy": { "confidence": "high", "components": [{ "symbol": "VNRT.L", "weight": 1.0 }] }
+        },
+        {
+          "id": "hsbc-shariah",
+          "name": "Shariah Law Equities - passive",
+          "slug": "shariah-law-equities---passive",
+          "benchmark": "S&P Global 1200 Shariah Select Index",
+          "underlying": "100% HSBC Islamic Global Equity Index Fund",
+          "anchorPricePence": 1196.0,
+          "contributionPct": 20,
+          "assetMix": { "equity": 1.0, "fixedIncome": 0, "alternatives": 0, "cash": 0 },
+          "proxy": {
+            "confidence": "medium",
+            "note": "ISDW tracks MSCI World Islamic, not S&P Global 1200 Shariah. Similar exposure (heavy US/tech) but a different index family. Largest contribution destination at 20%.",
+            "components": [{ "symbol": "ISDW.L", "weight": 1.0 }]
+          }
+        },
+        {
+          "id": "hsbc-uk-active",
+          "name": "UK Equities - active",
+          "slug": "uk-equities---active",
+          "benchmark": "67% iStoxx L&G Div Multi-Factor ESG UK / 16.5% FTSE Small Cap ex IT / 16.5% FTSE All-Share",
+          "underlying": "67% L&G Multi Factor UK Equity ESG Excl / 16.5% Schroder Life UK Smaller Cos / 16.5% Artemis UK Special Sits",
+          "anchorPricePence": 353.7,
+          "contributionPct": 0,
+          "assetMix": { "equity": 1.0, "fixedIncome": 0, "alternatives": 0, "cash": 0 },
+          "proxy": {
+            "confidence": "medium",
+            "components": [
+              { "symbol": "VUKE.L", "weight": 0.55 },
+              { "symbol": "VMID.L", "weight": 0.28 },
+              { "symbol": "ISP6.L", "weight": 0.17 }
+            ]
+          }
+        },
+        {
+          "id": "hsbc-uk-passive",
+          "name": "UK Equities - passive",
+          "slug": "uk-equities---passive",
+          "benchmark": "FTSE All-Share Index",
+          "underlying": "100% L&G UK Equity Index Fund",
+          "anchorPricePence": 333.7,
+          "contributionPct": 10,
+          "assetMix": { "equity": 1.0, "fixedIncome": 0, "alternatives": 0, "cash": 0 },
+          "proxy": {
+            "confidence": "high",
+            "note": "No clean FTSE All-Share ETF exists. 83/17 FTSE 100 / FTSE 250 blend approximates All-Share closely.",
+            "components": [
+              { "symbol": "VUKE.L", "weight": 0.83 },
+              { "symbol": "VMID.L", "weight": 0.17 }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "aviva-240k",
+      "name": "Aviva (~240K pot)",
+      "provider": "Aviva",
+      "notes": "OVERLAP WARNING: four of the five holdings are global/overseas equity trackers with heavily duplicated exposure. Outstanding action: International Index Tracking S2 -> Global Bond S6.",
+      "funds": [
+        {
+          "id": "av240-brockseas",
+          "name": "Aviva Pension BlackRock Overseas Consensus Equity S6",
+          "isin": "GB00BRJL1D29",
+          "trustnetId": "ddr9",
+          "contributionPct": 0,
+          "assetMix": { "equity": 1.0, "fixedIncome": 0, "alternatives": 0, "cash": 0 },
+          "proxy": { "confidence": "exact", "type": "isin", "components": [{ "symbol": "GB00BRJL1D29", "weight": 1.0 }] }
+        },
+        {
+          "id": "av240-intlindex",
+          "name": "Aviva Pension International Index Tracking S2",
+          "isin": "GB0009671941",
+          "morningstarId": "VAUSA05SGP",
+          "benchmark": "FTSE World (ex UK) Index",
+          "contributionPct": 0,
+          "assetMix": { "equity": 1.0, "fixedIncome": 0, "alternatives": 0, "cash": 0 },
+          "pendingAction": "Switch to Global Bond S6 (GB00B0ZT1S65) - outstanding de-risking action.",
+          "proxy": { "confidence": "exact", "type": "isin", "components": [{ "symbol": "GB0009671941", "weight": 1.0 }] }
+        },
+        {
+          "id": "av240-brworldexuk",
+          "name": "Aviva Pension BlackRock World ex-UK Equity Index Tracker S6",
+          "isin": "GB00B6VZKW79",
+          "trustnetId": "n5cb",
+          "isinConfidence": "unverified",
+          "isinNote": "GB00B6VZKW79 is the MyM share class; the S6 ISIN may differ. Verify on the Aviva Fund Centre before relying on the price feed.",
+          "contributionPct": 0,
+          "assetMix": { "equity": 1.0, "fixedIncome": 0, "alternatives": 0, "cash": 0 },
+          "proxy": { "confidence": "medium", "type": "isin", "components": [{ "symbol": "GB00B6VZKW79", "weight": 1.0 }] }
+        },
+        {
+          "id": "av240-globaleq",
+          "name": "Aviva Pension Global Equity S6",
+          "isin": "GB00B0ZSMG86",
+          "morningstarId": "VAUSA068GM",
+          "contributionPct": 0,
+          "assetMix": { "equity": 1.0, "fixedIncome": 0, "alternatives": 0, "cash": 0 },
+          "proxy": { "confidence": "exact", "type": "isin", "components": [{ "symbol": "GB00B0ZSMG86", "weight": 1.0 }] }
+        },
+        {
+          "id": "av240-mixed4085",
+          "name": "Aviva Pension Mixed Investment (40-85% shares) S6",
+          "isin": "GB00B0ZSNS73",
+          "morningstarId": "VAUSA068FM",
+          "contributionPct": 0,
+          "assetMix": { "equity": 0.7, "fixedIncome": 0.25, "alternatives": 0, "cash": 0.05 },
+          "assetMixNote": "ESTIMATE - confirm from factsheet.",
+          "proxy": { "confidence": "exact", "type": "isin", "components": [{ "symbol": "GB00B0ZSNS73", "weight": 1.0 }] }
+        }
+      ]
+    },
+    {
+      "id": "aviva-70k",
+      "name": "Aviva (~70K pot)",
+      "provider": "Aviva",
+      "notes": "Aviva life/pension funds are insured funds with real ISINs and daily published prices - no ETF proxy needed. Source: Aviva Fund Centre (fundslibrary/Longboat) or Morningstar UK by ISIN. Prices are as at close of the previous working day.",
+      "funds": [
+        {
+          "id": "av70-globaleq",
+          "name": "Aviva Pension Global Equity S6",
+          "isin": "GB00B0ZSMG86",
+          "morningstarId": "VAUSA068GM",
+          "contributionPct": 0,
+          "assetMix": { "equity": 1.0, "fixedIncome": 0, "alternatives": 0, "cash": 0 },
+          "proxy": { "confidence": "exact", "type": "isin", "components": [{ "symbol": "GB00B0ZSMG86", "weight": 1.0 }] }
+        },
+        {
+          "id": "av70-mixed4085",
+          "name": "Aviva Pension Mixed Investment (40-85% shares) S6",
+          "isin": "GB00B0ZSNS73",
+          "morningstarId": "VAUSA068FM",
+          "contributionPct": 0,
+          "assetMix": { "equity": 0.7, "fixedIncome": 0.25, "alternatives": 0, "cash": 0.05 },
+          "assetMixNote": "ESTIMATE. Sector allows 40-85% equity. Confirm actual split from the fund factsheet - it materially affects the glide-path number.",
+          "proxy": { "confidence": "exact", "type": "isin", "components": [{ "symbol": "GB00B0ZSNS73", "weight": 1.0 }] }
+        },
+        {
+          "id": "av70-globalbond",
+          "name": "Aviva Pension Global Bond S6",
+          "isin": "GB00B0ZT1S65",
+          "morningstarId": "VAUSA068GL",
+          "contributionPct": 0,
+          "assetMix": { "equity": 0, "fixedIncome": 1.0, "alternatives": 0, "cash": 0 },
+          "proxy": { "confidence": "exact", "type": "isin", "components": [{ "symbol": "GB00B0ZT1S65", "weight": 1.0 }] }
+        },
+        {
+          "id": "av70-jpmeursmall",
+          "name": "Aviva Pension JPM European Smaller Cos S6",
+          "isin": null,
+          "trustnetId": "h7v1",
+          "contributionPct": 0,
+          "assetMix": { "equity": 1.0, "fixedIncome": 0, "alternatives": 0, "cash": 0 },
+          "proxy": {
+            "confidence": "low",
+            "type": "isin",
+            "note": "ISIN not found in public sources. Residual GBP 195.77 after the switch to Global Bond S6 - immaterial (0.3% of pot). Either sweep it or leave it as a manual entry.",
+            "components": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "phoenix",
+      "name": "Phoenix / Custard (plan 413466001M)",
+      "provider": "Phoenix",
+      "notes": "STUB - needs fund names. Consolidation candidate: 2025 admin fees GBP 955, ~1.64% of pot.",
+      "funds": []
+    },
+    {
+      "id": "standard-life",
+      "name": "Standard Life (policy H81338 18)",
+      "provider": "Standard Life",
+      "notes": "STUB. 93% in a closed With Profits fund - no daily published price. Use proxy.type 'manual': enter transfer value quarterly. Consolidation pending GAR/MVR checks.",
+      "funds": [
+        {
+          "id": "sl-withprofits",
+          "name": "With Profits (closed)",
+          "benchmark": "None - closed with-profits fund",
+          "anchorPricePence": null,
+          "contributionPct": 0,
+          "assetMix": { "equity": 0.4, "fixedIncome": 0.5, "alternatives": 0.05, "cash": 0.05 },
+          "proxy": { "confidence": "manual", "note": "Enter value manually each quarter.", "components": [] }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>Pension tracker</title>
+<link rel="icon" href="data:,">
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --line:#252a34; --fg:#e8eaed; --muted:#9aa3b2;
+    --eq:#5b8def; --fi:#3fb27f; --alt:#c9a227; --cash:#8a8f98; --warn:#e0a458; --bad:#e05a5a;
+    --radius:12px;
+  }
+  @media (prefers-color-scheme: light){
+    :root{ --bg:#f6f7f9; --panel:#fff; --line:#e3e6ea; --fg:#151821; --muted:#5d6673; }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;padding:16px;background:var(--bg);color:var(--fg);
+    font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    max-width:900px;margin-inline:auto;-webkit-text-size-adjust:100%}
+  h1{font-size:19px;margin:0}
+  h2{font-size:15px;margin:0 0 10px;color:var(--muted);font-weight:600;
+     text-transform:uppercase;letter-spacing:.06em}
+  header{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:16px}
+  .stamp{font-size:12px;color:var(--muted)}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+        padding:16px;margin-bottom:14px}
+  .total{font-size:34px;font-weight:650;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+  .delta{font-size:14px;color:var(--muted);margin-top:2px}
+  .up{color:var(--fi)} .down{color:var(--bad)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px}
+  .stat .k{font-size:12px;color:var(--muted)} .stat .v{font-size:19px;font-weight:600;font-variant-numeric:tabular-nums}
+  table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+  th,td{text-align:right;padding:7px 6px;border-bottom:1px solid var(--line);font-size:13px}
+  th:first-child,td:first-child{text-align:left}
+  th{color:var(--muted);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.05em}
+  tr.pot td{background:color-mix(in srgb,var(--fg) 5%,transparent);font-weight:600}
+  .bar{display:flex;height:9px;border-radius:5px;overflow:hidden;margin:10px 0 6px}
+  .bar>span{display:block}
+  .legend{display:flex;flex-wrap:wrap;gap:12px;font-size:12px;color:var(--muted)}
+  .dot{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:5px;vertical-align:baseline}
+  button{font:inherit;background:var(--panel);color:var(--fg);border:1px solid var(--line);
+         border-radius:8px;padding:7px 13px;cursor:pointer}
+  button:hover{border-color:var(--muted)}
+  button.primary{background:var(--eq);border-color:var(--eq);color:#fff}
+  input{font:inherit;background:var(--bg);color:var(--fg);border:1px solid var(--line);
+        border-radius:7px;padding:6px 8px;width:100%;max-width:110px;text-align:right}
+  .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .flag{font-size:10px;padding:1px 6px;border-radius:99px;border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+  .flag.low{color:var(--warn);border-color:var(--warn)}
+  .flag.stale{color:var(--bad);border-color:var(--bad)}
+  .note{font-size:12.5px;color:var(--muted)}
+  dialog{background:var(--panel);color:var(--fg);border:1px solid var(--line);
+         border-radius:var(--radius);max-width:640px;width:calc(100% - 24px);padding:18px}
+  dialog::backdrop{background:#0008}
+  .hide{display:none}
+  canvas{max-height:230px}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>Pension tracker</h1>
+    <div class="stamp" id="stamp">loading…</div>
+  </div>
+  <div class="row">
+    <button id="btnEdit">Holdings</button>
+  </div>
+</header>
+
+<div id="empty" class="card hide">
+  <h2>No holdings yet</h2>
+  <p class="note">
+    Your unit counts are stored only in this browser — they are never committed to the
+    repository and never leave this device. Enter them once per device, or export a
+    backup and import it elsewhere.
+  </p>
+  <button class="primary" id="btnFirstRun">Enter holdings</button>
+</div>
+
+<main id="app" class="hide">
+  <div class="card">
+    <div class="total" id="total">—</div>
+    <div class="delta" id="delta"></div>
+    <canvas id="chart"></canvas>
+  </div>
+
+  <div class="card">
+    <h2>Allocation</h2>
+    <div class="bar" id="bar"></div>
+    <div class="legend" id="legend"></div>
+    <div class="grid" style="margin-top:14px">
+      <div class="stat"><div class="k">Equity</div><div class="v" id="eqPct">—</div></div>
+      <div class="stat"><div class="k">Target</div><div class="v">55%</div></div>
+      <div class="stat"><div class="k">Drift</div><div class="v" id="drift">—</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Holdings</h2>
+    <table id="tbl"></table>
+    <p class="note" id="caveats" style="margin-bottom:0"></p>
+  </div>
+</main>
+
+<dialog id="dlg">
+  <h2 style="margin-bottom:14px">Holdings</h2>
+  <p class="note" style="margin-top:0">
+    Enter units and the unit price shown in your provider's app, plus the date you read
+    it. Prices are then rolled forward daily from the proxy. Re-read after contributions
+    or switches.
+  </p>
+  <div style="max-height:52vh;overflow:auto"><table id="editTbl"></table></div>
+  <div class="row" style="margin-top:16px;justify-content:space-between">
+    <div class="row">
+      <button id="btnExport">Export</button>
+      <button id="btnImport">Import</button>
+    </div>
+    <div class="row">
+      <button id="btnCancel">Cancel</button>
+      <button class="primary" id="btnSave">Save</button>
+    </div>
+  </div>
+</dialog>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+const KEY = "pension-holdings-v1";
+const fmt  = n => "£" + n.toLocaleString("en-GB", {maximumFractionDigits:0});
+const fmt2 = n => n.toLocaleString("en-GB", {minimumFractionDigits:2, maximumFractionDigits:2});
+const pct  = n => (n*100).toFixed(1) + "%";
+
+let CFG, PRICES, HOLD = {}, chart;
+
+const allFunds = () => CFG.pots.flatMap(p => (p.funds||[]).map(f => ({...f, potId:p.id, potName:p.name})));
+const load = () => { try { HOLD = JSON.parse(localStorage.getItem(KEY)) || {}; } catch { HOLD = {}; } };
+const save = () => localStorage.setItem(KEY, JSON.stringify(HOLD));
+
+/* Composite proxy level on a given date, rebased so it equals 1 at baseDate.
+   Returns null when any component lacks data — better to show a fund as stale
+   than to quietly value it on partial information. */
+function proxyRatio(fund, date, baseDate){
+  const comps = fund.proxy?.components || [];
+  if (!comps.length) return null;
+  let acc = 0;
+  for (const c of comps){
+    const s = PRICES.series?.[c.symbol];
+    if (!s || !s.length) return null;
+    const at = d => { let v = null; for (const [dt,p] of s){ if (dt <= d) v = p; else break; } return v; };
+    const now = at(date), base = at(baseDate);
+    if (now == null || base == null || !base) return null;
+    acc += c.weight * (now / base);
+  }
+  return acc;
+}
+
+function priceDates(){
+  const set = new Set();
+  for (const s of Object.values(PRICES.series || {})) for (const [d] of s) set.add(d);
+  return [...set].sort();
+}
+
+function valueFund(fund, h, date){
+  if (!h || !h.units) return null;
+  const r = proxyRatio(fund, date, h.priceDate);
+  if (r == null) return h.units * (h.priceP/100);          // fall back to last known price
+  return h.units * (h.priceP/100) * r;
+}
+
+function render(){
+  const funds = allFunds();
+  const held  = funds.filter(f => HOLD[f.id]?.units > 0);
+  document.getElementById("empty").classList.toggle("hide", held.length > 0);
+  document.getElementById("app").classList.toggle("hide", held.length === 0);
+  if (!held.length) return;
+
+  const dates = priceDates();
+  const today = dates.at(-1) || new Date().toISOString().slice(0,10);
+
+  // Totals
+  let total = 0, mix = {equity:0, fixedIncome:0, alternatives:0, cash:0}, stale = 0;
+  for (const f of held){
+    const h = HOLD[f.id];
+    const v = valueFund(f, h, today) ?? 0;
+    total += v;
+    if (proxyRatio(f, today, h.priceDate) == null) stale++;
+    for (const k in mix) mix[k] += v * (f.assetMix?.[k] ?? 0);
+  }
+
+  document.getElementById("total").textContent = fmt(total);
+
+  // Series
+  const series = dates.map(d => {
+    let t = 0;
+    for (const f of held) t += valueFund(f, HOLD[f.id], d) ?? 0;
+    return t;
+  });
+  const first = series.find(v => v > 0);
+  if (first){
+    const chg = total - series.at(-1 - Math.min(20, series.length-1));
+    const el = document.getElementById("delta");
+    el.textContent = (chg >= 0 ? "▲ " : "▼ ") + fmt(Math.abs(chg)) + " over last " +
+                     Math.min(20, series.length) + " sessions";
+    el.className = "delta " + (chg >= 0 ? "up" : "down");
+  }
+
+  // Allocation
+  const bar = document.getElementById("bar"), leg = document.getElementById("legend");
+  const parts = [["equity","Equity","--eq"],["fixedIncome","Fixed income","--fi"],
+                 ["alternatives","Alternatives","--alt"],["cash","Cash","--cash"]];
+  bar.innerHTML = ""; leg.innerHTML = "";
+  for (const [k,label,cssVar] of parts){
+    const share = total ? mix[k]/total : 0;
+    if (share <= 0) continue;
+    const seg = document.createElement("span");
+    seg.style.width = (share*100)+"%";
+    seg.style.background = `var(${cssVar})`;
+    bar.appendChild(seg);
+    leg.insertAdjacentHTML("beforeend",
+      `<span><i class="dot" style="background:var(${cssVar})"></i>${label} ${pct(share)}</span>`);
+  }
+  const eq = total ? mix.equity/total : 0;
+  document.getElementById("eqPct").textContent = pct(eq);
+  const dr = eq - 0.55;
+  const drEl = document.getElementById("drift");
+  drEl.textContent = (dr>=0?"+":"") + (dr*100).toFixed(1) + " pp";
+  drEl.className = "v " + (Math.abs(dr) < 0.02 ? "" : dr > 0 ? "down" : "up");
+
+  // Table
+  const rows = [];
+  for (const pot of CFG.pots){
+    const pf = (pot.funds||[]).filter(f => HOLD[f.id]?.units > 0);
+    if (!pf.length) continue;
+    const sub = pf.reduce((a,f) => a + (valueFund(f, HOLD[f.id], today) ?? 0), 0);
+    rows.push(`<tr class="pot"><td>${pot.name}</td><td></td><td>${fmt(sub)}</td><td>${pct(sub/total)}</td></tr>`);
+    for (const f of pf){
+      const v = valueFund(f, HOLD[f.id], today) ?? 0;
+      const conf = f.proxy?.confidence ?? "yahoo";
+      const isStale = proxyRatio(f, today, HOLD[f.id].priceDate) == null;
+      const flags =
+        (isStale ? `<span class="flag stale">stale</span> ` : "") +
+        (conf === "low" ? `<span class="flag low">approx</span>` :
+         conf === "exact" ? `<span class="flag">exact</span>` : "");
+      rows.push(`<tr><td>${f.name} ${flags}</td><td>${fmt2(HOLD[f.id].units)}</td><td>${fmt(v)}</td><td>${pct(v/total)}</td></tr>`);
+    }
+  }
+  document.getElementById("tbl").innerHTML =
+    `<tr><th>Fund</th><th>Units</th><th>Value</th><th>%</th></tr>` + rows.join("");
+
+  document.getElementById("caveats").textContent =
+    (stale ? `${stale} holding(s) have no proxy price and are shown at their last entered price. ` : "") +
+    `Funds marked "approx" use a synthetic proxy; re-anchor them to the published unit price each quarter.`;
+
+  document.getElementById("stamp").textContent =
+    "Prices to " + today + (PRICES.lastUpdated ? " · updated " + PRICES.lastUpdated.slice(0,16).replace("T"," ") : "");
+
+  // Chart
+  const ctx = document.getElementById("chart");
+  chart?.destroy();
+  const css = getComputedStyle(document.documentElement);
+  chart = new Chart(ctx, {
+    type:"line",
+    data:{ labels:dates, datasets:[{ data:series, borderColor:css.getPropertyValue("--eq"),
+      backgroundColor:css.getPropertyValue("--eq")+"22", borderWidth:2, fill:true,
+      pointRadius:0, tension:.25 }]},
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label: c => fmt(c.parsed.y) }}},
+      scales:{ x:{ grid:{display:false}, ticks:{maxTicksLimit:6, color:css.getPropertyValue("--muted")}},
+               y:{ grid:{color:css.getPropertyValue("--line")},
+                   ticks:{ color:css.getPropertyValue("--muted"), callback:v => fmt(v) }}},
+      interaction:{ intersect:false, mode:"index" }}
+  });
+}
+
+/* ---- editor ---- */
+function openEditor(){
+  const rows = [];
+  for (const pot of CFG.pots){
+    if (!(pot.funds||[]).length) {
+      rows.push(`<tr class="pot"><td colspan="4">${pot.name} — not configured yet</td></tr>`);
+      continue;
+    }
+    rows.push(`<tr class="pot"><td colspan="4">${pot.name}</td></tr>`);
+    for (const f of pot.funds){
+      const h = HOLD[f.id] || {};
+      rows.push(`<tr>
+        <td style="font-size:12.5px">${f.name}</td>
+        <td><input data-f="${f.id}" data-k="units" type="number" step="0.0001" value="${h.units ?? ""}" placeholder="units"></td>
+        <td><input data-f="${f.id}" data-k="priceP" type="number" step="0.01" value="${h.priceP ?? ""}" placeholder="pence"></td>
+        <td><input data-f="${f.id}" data-k="priceDate" type="date" value="${h.priceDate ?? new Date().toISOString().slice(0,10)}" style="max-width:135px"></td>
+      </tr>`);
+    }
+  }
+  document.getElementById("editTbl").innerHTML =
+    `<tr><th>Fund</th><th>Units</th><th>Price (p)</th><th>As at</th></tr>` + rows.join("");
+  document.getElementById("dlg").showModal();
+}
+
+document.getElementById("btnSave").onclick = () => {
+  const next = {};
+  for (const el of document.querySelectorAll("#editTbl input")){
+    const id = el.dataset.f, k = el.dataset.k;
+    (next[id] ??= {})[k] = k === "priceDate" ? el.value : parseFloat(el.value);
+  }
+  for (const [id,v] of Object.entries(next)){
+    if (v.units > 0 && v.priceP > 0) HOLD[id] = v; else delete HOLD[id];
+  }
+  save(); document.getElementById("dlg").close(); render();
+};
+document.getElementById("btnCancel").onclick = () => document.getElementById("dlg").close();
+document.getElementById("btnEdit").onclick = openEditor;
+document.getElementById("btnFirstRun").onclick = openEditor;
+
+document.getElementById("btnExport").onclick = () => {
+  const blob = new Blob([JSON.stringify(HOLD,null,2)], {type:"application/json"});
+  const a = Object.assign(document.createElement("a"),
+    {href:URL.createObjectURL(blob), download:"pension-holdings.json"});
+  a.click(); URL.revokeObjectURL(a.href);
+};
+document.getElementById("btnImport").onclick = () => {
+  const i = Object.assign(document.createElement("input"), {type:"file", accept:".json"});
+  i.onchange = async () => {
+    try { HOLD = JSON.parse(await i.files[0].text()); save(); openEditor(); render(); }
+    catch { alert("Could not read that file."); }
+  };
+  i.click();
+};
+
+(async function init(){
+  load();
+  const bust = "?v=" + Date.now();
+  [CFG, PRICES] = await Promise.all([
+    fetch("config/funds.json" + bust).then(r => r.json()),
+    fetch("data/prices.json" + bust).then(r => r.json()).catch(() => ({series:{}})),
+  ]);
+  render();
+})();
+</script>
+</body>
+</html>
