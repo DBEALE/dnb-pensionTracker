@@ -1,5 +1,180 @@
 {
-  "series": {},
-  "meta": {},
-  "lastUpdated": null
+  "series": {
+    "VAPX.L": [
+      [
+        "2026-08-08",
+        32.282501
+      ]
+    ],
+    "VEVE.L": [
+      [
+        "2026-08-08",
+        108.419998
+      ]
+    ],
+    "AGBP.L": [
+      [
+        "2026-08-08",
+        4.556
+      ]
+    ],
+    "SGLN.L": [
+      [
+        "2026-08-08",
+        6255
+      ]
+    ],
+    "CSH2.L": [
+      [
+        "2026-08-08",
+        124640
+      ]
+    ],
+    "VERX.L": [
+      [
+        "2026-08-08",
+        43.985001
+      ]
+    ],
+    "EMIM.L": [
+      [
+        "2026-08-08",
+        3984
+      ]
+    ],
+    "GHYS.L": [
+      [
+        "2026-08-08",
+        88.900002
+      ]
+    ],
+    "IWDG.L": [
+      [
+        "2026-08-08",
+        1272.5
+      ]
+    ],
+    "VJPN.L": [
+      [
+        "2026-08-08",
+        38.862499
+      ]
+    ],
+    "VNRT.L": [
+      [
+        "2026-08-08",
+        140.255005
+      ]
+    ],
+    "ISDW.L": [
+      [
+        "2026-08-08",
+        68.519997
+      ]
+    ],
+    "VUKE.L": [
+      [
+        "2026-08-08",
+        47.380001
+      ]
+    ],
+    "VMID.L": [
+      [
+        "2026-08-08",
+        38.07
+      ]
+    ],
+    "ISP6.L": [
+      [
+        "2026-08-08",
+        8933
+      ]
+    ]
+  },
+  "meta": {
+    "VAPX.L": {
+      "currency": "GBP",
+      "lastAsOf": "2026-08-07",
+      "via": "yahoo"
+    },
+    "VEVE.L": {
+      "currency": "GBP",
+      "lastAsOf": "2026-08-07",
+      "via": "yahoo"
+    },
+    "AGBP.L": {
+      "currency": "GBP",
+      "lastAsOf": "2026-08-07",
+      "via": "yahoo"
+    },
+    "SGLN.L": {
+      "currency": "GBp",
+      "lastAsOf": "2026-08-07",
+      "via": "yahoo"
+    },
+    "CSH2.L": {
+      "currency": "GBp",
+      "lastAsOf": "2026-08-07",
+      "via": "yahoo"
+    },
+    "VERX.L": {
+      "currency": "GBP",
+      "lastAsOf": "2026-08-07",
+      "via": "yahoo"
+    },
+    "EMIM.L": {
+      "currency": "GBp",
+      "lastAsOf": "2026-08-07",
+      "via": "yahoo"
+    },
+    "GHYS.L": {
+      "currency": "GBP",
+      "lastAsOf": "2026-08-07",
+      "via": "yahoo"
+    },
+    "IWDG.L": {
+      "currency": "GBp",
+      "lastAsOf": "2026-08-07",
+      "via": "yahoo"
+    },
+    "VJPN.L": {
+      "currency": "GBP",
+      "lastAsOf": "2026-08-07",
+      "via": "yahoo"
+    },
+    "VNRT.L": {
+      "currency": "GBP",
+      "lastAsOf": "2026-08-07",
+      "via": "yahoo"
+    },
+    "ISDW.L": {
+      "currency": "USD",
+      "lastAsOf": "2026-08-07",
+      "via": "yahoo"
+    },
+    "VUKE.L": {
+      "currency": "GBP",
+      "lastAsOf": "2026-08-07",
+      "via": "yahoo"
+    },
+    "VMID.L": {
+      "currency": "GBP",
+      "lastAsOf": "2026-08-07",
+      "via": "yahoo"
+    },
+    "ISP6.L": {
+      "currency": "GBp",
+      "lastAsOf": "2026-08-07",
+      "via": "yahoo"
+    }
+  },
+  "lastUpdated": "2026-08-08T18:38:49.394Z",
+  "failures": [
+    "GB00BRJL1D29: fetchIsin: isin provider not implemented",
+    "GB0009671941: fetchIsin: isin provider not implemented",
+    "GB00B6VZKW79: fetchIsin: isin provider not implemented",
+    "GB00B0ZSMG86: fetchIsin: isin provider not implemented",
+    "GB00B0ZSNS73: fetchIsin: isin provider not implemented",
+    "GB00B0ZT1S65: fetchIsin: isin provider not implemented"
+  ]
 }
