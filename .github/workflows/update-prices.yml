@@ -39,7 +39,11 @@ jobs:
         run: |
           git config user.name  "pension-tracker[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/prices.json .keepalive
+          git add data/prices.json
+          # .keepalive only exists in the first days of the month, so add it
+          # conditionally - an unconditional `git add` on a missing path aborts
+          # the whole step under `bash -e`.
+          [ -f .keepalive ] && git add .keepalive || true
           if git diff --staged --quiet; then
             echo "No change - nothing to commit."
           else
