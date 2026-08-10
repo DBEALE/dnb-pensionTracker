@@ -4,177 +4,289 @@
       [
         "2026-08-08",
         32.282501
+      ],
+      [
+        "2026-08-10",
+        32.02
       ]
     ],
     "VEVE.L": [
       [
         "2026-08-08",
         108.419998
+      ],
+      [
+        "2026-08-10",
+        108.139999
       ]
     ],
     "AGBP.L": [
       [
         "2026-08-08",
         4.556
+      ],
+      [
+        "2026-08-10",
+        4.549
       ]
     ],
     "SGLN.L": [
       [
         "2026-08-08",
         6255
+      ],
+      [
+        "2026-08-10",
+        6239
       ]
     ],
     "CSH2.L": [
       [
         "2026-08-08",
         124640
+      ],
+      [
+        "2026-08-10",
+        124660
       ]
     ],
     "VERX.L": [
       [
         "2026-08-08",
         43.985001
+      ],
+      [
+        "2026-08-10",
+        43.875
       ]
     ],
     "EMIM.L": [
       [
         "2026-08-08",
         3984
+      ],
+      [
+        "2026-08-10",
+        3960
       ]
     ],
     "GHYS.L": [
       [
         "2026-08-08",
         88.900002
+      ],
+      [
+        "2026-08-10",
+        88.489998
       ]
     ],
     "IWDG.L": [
       [
         "2026-08-08",
         1272.5
+      ],
+      [
+        "2026-08-10",
+        1273
       ]
     ],
     "VJPN.L": [
       [
         "2026-08-08",
         38.862499
+      ],
+      [
+        "2026-08-10",
+        38.625
       ]
     ],
     "VNRT.L": [
       [
         "2026-08-08",
         140.255005
+      ],
+      [
+        "2026-08-10",
+        140.039993
       ]
     ],
     "ISDW.L": [
       [
         "2026-08-08",
         68.519997
+      ],
+      [
+        "2026-08-10",
+        68.870003
       ]
     ],
     "VUKE.L": [
       [
         "2026-08-08",
         47.380001
+      ],
+      [
+        "2026-08-10",
+        47.215
       ]
     ],
     "VMID.L": [
       [
         "2026-08-08",
         38.07
+      ],
+      [
+        "2026-08-10",
+        37.915001
       ]
     ],
     "ISP6.L": [
       [
         "2026-08-08",
         8933
+      ],
+      [
+        "2026-08-10",
+        8851
+      ]
+    ],
+    "GB0009671941": [
+      [
+        "2026-08-10",
+        11.8956
+      ]
+    ],
+    "GB00B6VZKW79": [
+      [
+        "2026-08-10",
+        6.5774
+      ]
+    ],
+    "GB00B0ZSNS73": [
+      [
+        "2026-08-10",
+        3.6014
+      ]
+    ],
+    "GBPUSD=X": [
+      [
+        "2026-08-10",
+        1.351151
+      ]
+    ],
+    "GBPEUR=X": [
+      [
+        "2026-08-10",
+        1.1699
       ]
     ]
   },
   "meta": {
     "VAPX.L": {
       "currency": "GBP",
-      "lastAsOf": "2026-08-07",
+      "lastAsOf": "2026-08-10",
       "via": "yahoo"
     },
     "VEVE.L": {
       "currency": "GBP",
-      "lastAsOf": "2026-08-07",
+      "lastAsOf": "2026-08-10",
       "via": "yahoo"
     },
     "AGBP.L": {
       "currency": "GBP",
-      "lastAsOf": "2026-08-07",
+      "lastAsOf": "2026-08-10",
       "via": "yahoo"
     },
     "SGLN.L": {
       "currency": "GBp",
-      "lastAsOf": "2026-08-07",
+      "lastAsOf": "2026-08-10",
       "via": "yahoo"
     },
     "CSH2.L": {
       "currency": "GBp",
-      "lastAsOf": "2026-08-07",
+      "lastAsOf": "2026-08-10",
       "via": "yahoo"
     },
     "VERX.L": {
       "currency": "GBP",
-      "lastAsOf": "2026-08-07",
+      "lastAsOf": "2026-08-10",
       "via": "yahoo"
     },
     "EMIM.L": {
       "currency": "GBp",
-      "lastAsOf": "2026-08-07",
+      "lastAsOf": "2026-08-10",
       "via": "yahoo"
     },
     "GHYS.L": {
       "currency": "GBP",
-      "lastAsOf": "2026-08-07",
+      "lastAsOf": "2026-08-10",
       "via": "yahoo"
     },
     "IWDG.L": {
       "currency": "GBp",
-      "lastAsOf": "2026-08-07",
+      "lastAsOf": "2026-08-10",
       "via": "yahoo"
     },
     "VJPN.L": {
       "currency": "GBP",
-      "lastAsOf": "2026-08-07",
+      "lastAsOf": "2026-08-10",
       "via": "yahoo"
     },
     "VNRT.L": {
       "currency": "GBP",
-      "lastAsOf": "2026-08-07",
+      "lastAsOf": "2026-08-10",
       "via": "yahoo"
     },
     "ISDW.L": {
       "currency": "USD",
-      "lastAsOf": "2026-08-07",
+      "lastAsOf": "2026-08-10",
       "via": "yahoo"
     },
     "VUKE.L": {
       "currency": "GBP",
-      "lastAsOf": "2026-08-07",
+      "lastAsOf": "2026-08-10",
       "via": "yahoo"
     },
     "VMID.L": {
       "currency": "GBP",
-      "lastAsOf": "2026-08-07",
+      "lastAsOf": "2026-08-10",
       "via": "yahoo"
     },
     "ISP6.L": {
       "currency": "GBp",
+      "lastAsOf": "2026-08-10",
+      "via": "yahoo"
+    },
+    "GB0009671941": {
+      "currency": "GBP",
       "lastAsOf": "2026-08-07",
+      "via": "eodhd"
+    },
+    "GB00B6VZKW79": {
+      "currency": "GBP",
+      "lastAsOf": "2026-08-06",
+      "via": "eodhd"
+    },
+    "GB00B0ZSNS73": {
+      "currency": "GBP",
+      "lastAsOf": "2026-08-07",
+      "via": "eodhd"
+    },
+    "GBPUSD=X": {
+      "currency": "USD",
+      "lastAsOf": "2026-08-10",
+      "via": "yahoo"
+    },
+    "GBPEUR=X": {
+      "currency": "EUR",
+      "lastAsOf": "2026-08-10",
       "via": "yahoo"
     }
   },
-  "lastUpdated": "2026-08-08T18:38:49.394Z",
+  "lastUpdated": "2026-08-10T18:48:26.499Z",
   "failures": [
-    "GB00BRJL1D29: fetchIsin: isin provider not implemented",
-    "GB0009671941: fetchIsin: isin provider not implemented",
-    "GB00B6VZKW79: fetchIsin: isin provider not implemented",
-    "GB00B0ZSMG86: fetchIsin: isin provider not implemented",
-    "GB00B0ZSNS73: fetchIsin: isin provider not implemented",
-    "GB00B0ZT1S65: fetchIsin: isin provider not implemented"
+    "GB00BRJL1D29: fetchIsin: no rows (ISIN not covered?)",
+    "GB00B0ZSMG86: fetchIsin: HTTP 404",
+    "GB00B0ZT1S65: fetchIsin: HTTP 404"
   ]
 }
